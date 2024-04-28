@@ -1,0 +1,16 @@
+{
+  "name": "cadastro-clientes",
+  "version": "1.0.0",
+  "description": "CRUD example with Node.js",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "crud",
+    "fs",
+    "nodejs"
+  ],
+  "author": "Manoel Lima",
+  "license": "MIT"
+}
