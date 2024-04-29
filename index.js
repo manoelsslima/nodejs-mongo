@@ -8,7 +8,13 @@ const customers = [];
 // a função deve ser async sempre que for usar await dentro dela
 async function listCustomers() {
     console.clear();
-    console.log(customers);
+    console.log("Clientes cadastrados: ");
+    console.log("ID | Nome | CPF | Endereço");
+    for (let i = 0; i < customers.length; i ++) {
+        const customer = customers[i];
+        console.log(`${customer.id} | ${customer.cpf} | ${customer.name} | ${customer.address}`);
+    }
+    console.log("");
     await rl.question("Pressione Enter para continuar...");
     printMenu();
 }
@@ -25,30 +31,33 @@ function validateAddress(address) {
     return true;
 }
 
+async function getAnswer(question, errorMessage, validationFunction) {
+    let answer = "";
+    do {
+        answer = await rl.question(question + "\n");
+        if (!validationFunction(answer)) {
+            console.log(errorMessage);
+        }
+    } while (!validationFunction(answer));
+
+    return answer;
+}
+
 async function startRegistration() {
     console.clear();
-    let name = "";
-    do {
-        name = await rl.question("Qual o nome do cliente?\n");
-        if (!validateName(name)) {
-            console.log("Nome inválido, tente novamente.");
-        }
-    } while (!validateName(name));
-    
-    let address = "";
-    do {
-        address = await rl.question("Qual o endereço do cliente?\n");
-        if (!validateAddress(address)) {
-            console.log("Endereço inválido, tente novamente.");
-        }
-    } while (!validateName(address));
+
+    let name = await getAnswer("Qual o nome do cliente?", "Nome inválido, tente novamente.", validateName);
+    let address = await getAnswer("Qual o endereço do cliente? ", "Endereço inválido, tente novamente.", validateAddress);
+    let cpf = await getAnswer("Qual o CPF do cliente? ", "CPF inválido, tente novamente.", () => { return true });
+
     const id = customers.length > 0 ? customers[customers.length - 1].id + 1 : 1;
     // não precisa ser name: name; address: address; id: id. Se forem iguais
     // o javascript vai assumir
     customers.push({
         id,
         name,
-        address
+        address,
+        cpf
     });
     console.log(`Cliente cadastrado com sucesso! ID: ${id} `);
     await rl.question("Pressione Enter para continuar...");
