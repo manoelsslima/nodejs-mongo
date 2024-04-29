@@ -13,10 +13,35 @@ async function listCustomers() {
     printMenu();
 }
 
+function validateName(name) {
+    if (!name) return false;
+    if (name.trim().indexOf(" ") === -1) return false;
+    return true;
+}
+
+function validateAddress(address) {
+    if (!address) return false;
+    if (address.trim().length < 10) return false;
+    return true;
+}
+
 async function startRegistration() {
     console.clear();
-    const name = await rl.question("Qual o nome do cliente?\n");
-    const address = await rl.question("Qual o endereço do cliente?\n");
+    let name = "";
+    do {
+        name = await rl.question("Qual o nome do cliente?\n");
+        if (!validateName(name)) {
+            console.log("Nome inválido, tente novamente.");
+        }
+    } while (!validateName(name));
+    
+    let address = "";
+    do {
+        address = await rl.question("Qual o endereço do cliente?\n");
+        if (!validateAddress(address)) {
+            console.log("Endereço inválido, tente novamente.");
+        }
+    } while (!validateName(address));
     const id = customers.length > 0 ? customers[customers.length - 1].id + 1 : 1;
     // não precisa ser name: name; address: address; id: id. Se forem iguais
     // o javascript vai assumir
@@ -25,7 +50,7 @@ async function startRegistration() {
         name,
         address
     });
-    console.log("Cliente cadastrado com sucesso!");
+    console.log(`Cliente cadastrado com sucesso! ID: ${id} `);
     await rl.question("Pressione Enter para continuar...");
     printMenu();
 }
