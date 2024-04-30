@@ -1,15 +1,16 @@
+const db = require('./db');
 const readline = require('node:readline/promises');
 const { stdin: input, stdout: output } = require('node:process');
 
 const rl = readline.createInterface({ input, output });
-
-const customers = [];
 
 // a função deve ser async sempre que for usar await dentro dela
 async function listCustomers() {
     console.clear();
     console.log("Clientes cadastrados: ");
     console.log("ID | Nome | CPF | Endereço");
+
+    const customers = db.getCustomers();
     for (let i = 0; i < customers.length; i ++) {
         const customer = customers[i];
         console.log(`${customer.id} | ${customer.cpf} | ${customer.name} | ${customer.address}`);
@@ -50,15 +51,8 @@ async function startRegistration() {
     let address = await getAnswer("Qual o endereço do cliente? ", "Endereço inválido, tente novamente.", validateAddress);
     let cpf = await getAnswer("Qual o CPF do cliente? ", "CPF inválido, tente novamente.", () => { return true });
 
-    const id = customers.length > 0 ? customers[customers.length - 1].id + 1 : 1;
-    // não precisa ser name: name; address: address; id: id. Se forem iguais
-    // o javascript vai assumir
-    customers.push({
-        id,
-        name,
-        address,
-        cpf
-    });
+    const id = db.addCustomer(name, address, cpf);
+
     console.log(`Cliente cadastrado com sucesso! ID: ${id} `);
     await rl.question("Pressione Enter para continuar...");
     printMenu();
