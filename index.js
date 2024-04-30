@@ -85,3 +85,4 @@ async function printMenu() {
 }
 
 printMenu();
+db.getCustomers(); // para carregar o banco de dados para memória
