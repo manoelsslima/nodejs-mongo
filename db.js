@@ -43,6 +43,18 @@ function updateCustomer(id, newData) {
     return true;
 }
 
+function deleteCustomer(id) {
+    // busco o customer no array pelo id - Number(string): converte string para number
+    const customerIndex = customers.findIndex(customer => customer.id === Number(id));
+    // se não encontrar (retorna -1)
+    if (customerIndex === -1) return false;
+    // remove elementos do array. A partir do customerIndex, remove 1 elemento
+    customers.splice(customerIndex, 1);
+    // atualiza no arquivo
+    fs.writeFileSync("db.json", JSON.stringify(customers));
+    return true;
+}
+
 function getCustomers() {
     // se não informar o charset, será retornado um array de bytes
     const customerString = fs.readFileSync("db.json", "utf-8");
@@ -53,9 +65,15 @@ function getCustomers() {
     return customers;
 }
 
+function getCustomer(id) {
+    return customers.find(customer => customer.id === Number(id));
+}
+
 // para que possa ser importado em outros arquivos, devemos exportar os métodos
 module.exports = {
     addCustomer,
     getCustomers,
-    updateCustomer
+    updateCustomer,
+    deleteCustomer,
+    getCustomer
 }

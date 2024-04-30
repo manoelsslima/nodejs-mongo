@@ -48,6 +48,11 @@ function validateAddressUpdate(address) {
     return true;
 }
 
+function validateConfirmation(choice) {
+    choice = choice.toUpperCase()
+    return choice === "S" || choice === "N";
+}
+
 async function getAnswer(question, errorMessage, validationFunction) {
     let answer = "";
     do {
@@ -95,6 +100,28 @@ async function startUpdate() {
     printMenu();
 }
 
+async function startDelete() {
+    console.clear();
+
+    const id = await getAnswer("Qual o ID do cliente?", "Id inválido, tente novamente.", validateId);
+
+    const customer = db.getCustomer(id);
+    const choice = await getAnswer(`Tem certeza que deseja excluir o cliente ${customer.name}? (S/N)`, "Opção inválida, tente novamente.", validateConfirmation);
+
+    if (choice.toUpperCase() === "S") {
+        const result = db.deleteCustomer(id);
+        
+        if (result) {
+            console.log(`Cliente excluído com sucesso!`);
+        } else {
+            console.log("Cliente não encontrado!");
+        }
+    }
+
+    await rl.question("Pressione Enter para continuar...");
+    printMenu();
+}
+
 async function printMenu() {
     try {
         console.clear();
@@ -102,6 +129,7 @@ async function printMenu() {
         console.log("1 - Ver Cliente");
         console.log("2 - Cadastrar Clientes");
         console.log("3 - Editar Cliente");
+        console.log("4 - Excluir Cliente");
         console.log("5 - Encerrar");
         
         const answer = await rl.question("Qual opção você deseja? ");
@@ -110,6 +138,7 @@ async function printMenu() {
             case "1": listCustomers(); break;
             case "2": startRegistration(); break;
             case "3": startUpdate(); break;
+            case "4": startDelete(); break;
             case "5": {
                 console.clear();
                 process.exit(0);
