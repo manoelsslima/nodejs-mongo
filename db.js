@@ -19,6 +19,30 @@ function addCustomer(name, address, cpf) {
     return id;
 }
 
+function updateCustomer(id, newData) {
+    // busco o customer no array pelo id - Number(string): converte string para number
+    const customerIndex = customers.findIndex(customer => customer.id === Number(id));
+    // se não encontrar (retorna -1)
+    if (customerIndex === -1) return false;
+    // pega o customer da posição customerIndex
+    const customer = customers[customerIndex];
+    // atualiza os dados
+    if (newData.name) {
+        customer.name = newData.name;
+    }
+    if (newData.address) {
+        customer.address = newData.address;
+    }
+    if (newData.cpf) {
+        customer.cpf = newData.cpf;
+    }
+    // substitui o customer antigo
+    customers[customerIndex] = customer;
+    // atualiza no arquivo
+    fs.writeFileSync("db.json", JSON.stringify(customers));
+    return true;
+}
+
 function getCustomers() {
     // se não informar o charset, será retornado um array de bytes
     const customerString = fs.readFileSync("db.json", "utf-8");
@@ -32,5 +56,6 @@ function getCustomers() {
 // para que possa ser importado em outros arquivos, devemos exportar os métodos
 module.exports = {
     addCustomer,
-    getCustomers
+    getCustomers,
+    updateCustomer
 }
